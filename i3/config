@@ -1,8 +1,8 @@
 # This is my personal i3 configuration file.  
 #
-# I'm debating between switching to i3 since it's eaiser to configure, or stick
+# I'm debating between switching to i3 since it's easier to configure, or stick
 # with Haskell because it's so fast, stable, and works well for me with almost
-# no custimization (unlike i3, which required a bit of customization before I
+# no customization (unlike i3, which required a bit of customization before I
 # was happy).
 #
 # This is based on the auto-generated i3 config, with my changes as a complete
@@ -18,6 +18,13 @@ set $mod Mod1
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace 8
+
+# class         border   bg      text  indicator  child_brder
+client.focused #FF0000 #CC0000 #ffffff #2e9ef4     #285577
+new_window normal 4
+new_float normal  4
+
+# client.focused border normal 3
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -80,7 +87,7 @@ bindsym $mod+o split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
+# bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
@@ -120,17 +127,37 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
+# move focused container to workspace and follow it 
+bindsym $mod+Control+Shift+1 move container to workspace 1; workspace 1
+bindsym $mod+Control+Shift+2 move container to workspace 2; workspace 2
+bindsym $mod+Control+Shift+3 move container to workspace 3; workspace 3
+bindsym $mod+Control+Shift+4 move container to workspace 4; workspace 4
+bindsym $mod+Control+Shift+5 move container to workspace 5; workspace 5
+bindsym $mod+Control+Shift+6 move container to workspace 6; workspace 6
+bindsym $mod+Control+Shift+7 move container to workspace 7; workspace 7
+bindsym $mod+Control+Shift+8 move container to workspace 8; workspace 8
+bindsym $mod+Control+Shift+9 move container to workspace 9; workspace 9
+bindsym $mod+Control+Shift+0 move container to workspace 10; workspace 10
+
 # lock the screen
-bindsym $mod+Control+l exec slock
+bindsym $mod+Control+l exec i3lock -e -f
+bindsym Mod4+l exec i3lock -e -f
 
 # Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+# bindsym XF86AudioMicMute exec --no-startup-id pactl <TODO>
 
-# Sreen brightness controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
-bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+# Screen controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 20
+bindsym XF86MonBrightnessDown exec xbacklight -dec 20
+bindsym XF86Display exec xrandr --auto
+
+# Application controls
+bindsym XF86HomePage exec firefox
+bindsym XF86Calculator exec gnome-calculator
+bindsym Mod4+e exec nautilus --no-desktop
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -165,9 +192,43 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3lock -e -f; mode "default"
+    bindsym e exit exec --no-startup-id i3-msg exit; mode "default"
+    bindsym s exec --no-startup-id systemctl suspend; mode "default"
+    bindsym h exec --no-startup-id systemctl hibernate; mode "default"
+    bindsym r exec --no-startup-id systemctl reboot; mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff; mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+BackSpace mode "$mode_system"
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
         status_command i3status
         tray_output primary
+        font pango:monospace 10
 }
+
+exec --no-startup-id xsetroot -solid "#303030"
+exec --no-startup-id xautolock -time 15 -locker 'i3lock -e -f'
+exec --no-startup-id nm-applet
+exec --no-startup-id caffeine-indicator 
+exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
+
+
+# xprop to get class
+assign [class="HipChat"] 9
+assign [class="Zeal"] 10
+
+exec --no-startup-id zeal
+exec --no-startup-id hipchat4
+
+# For windows that start in full-screen that I want to capture
+# for_window [class="<CLASS>"] fullscreen disable
