@@ -1,7 +1,7 @@
 # This is my personal i3 configuration file.  
 #
 # I'm debating between switching to i3 since it's easier to configure, or stick
-# with Haskell because it's so fast, stable, and works well for me with almost
+# with xmonad because it's so fast, stable, and works well for me with almost
 # no customization (unlike i3, which required a bit of customization before I
 # was happy).
 #
@@ -21,10 +21,10 @@ font pango:monospace 8
 
 # class         border   bg      text  indicator  child_brder
 client.focused #FF0000 #CC0000 #ffffff #2e9ef4     #285577
-new_window normal 4
-new_float normal  4
-
-# client.focused border normal 3
+# new_window normal 4
+# new_float normal  4
+new_window pixel 4
+new_float pixel  4
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -167,13 +167,27 @@ mode "$mode_screens" {
     bindsym Escape mode "default"
 }
 bindsym XF86Display mode "$mode_screens"
+bindsym $mod+s mode "$mode_screens"
 
 # Application controls
 bindsym XF86HomePage exec firefox
 bindsym XF86Calculator exec gnome-calculator
 bindsym Mod4+e exec nautilus --no-desktop
-# bindsym Print exec import --screen ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png`
-bindsym Print exec import ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png`
+
+set $mode_screenshot  Screenshot (w)indow, seletio(n), (s)creen
+mode "$mode_screenshot" 
+{
+    bindsym w exec --no-startup-id scrot --focused && notify-send 'SCREENSHOT' 'Took screenshot of active window.'; mode "default"
+    bindsym --release n exec scrot --select && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+    bindsym s exec --no-startup-id scrot && notify-send 'SCREENSHOT' 'Took fullscreen screenshot'; mode "default"
+    # bindsym --release n exec import ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+    # bindsym --release s exec import -window root ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym Print mode "$mode_screenshot"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -209,7 +223,7 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+set $mode_system System (l)ock, (e)xit, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id i3lock -e -f; mode "default"
     bindsym e exit exec --no-startup-id i3-msg exit; mode "default"
@@ -237,7 +251,6 @@ exec --no-startup-id xautolock -time 15 -locker 'i3lock -e -f'
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
 exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
-
 
 # xprop to get class
 assign [class="HipChat"] 9
