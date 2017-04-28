@@ -153,14 +153,11 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20
 bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 
-
-
-set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal
+set $mode_screens Screens (a)uto, (r)eadable, (s)mall
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
-    bindsym e exec xrandr --output HDMI-1-2 --left-of eDP-1-1; mode "default"
-    bindsym x exec xrandr --output HDMI-1-2 --auto --output eDP-1-1 --off; mode "default"
-    bindsym i exec xrandr --output HDMI-1-2 --off --output eDP-1-1 --auto; mode "default"
+    bindsym r exec xrandr --output Virtual1 --mode 1440x900; mode "default"
+    bindsym s exec xrandr --output Virtual1 --mode 2880x1800;mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -261,3 +258,10 @@ exec --no-startup-id hipchat4
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
+
+# Machine specific... fix the resolution on startup
+# exec --no-startup-id xrandr --output Virtual1 --mode 1440x900
+exec --no-startup-id prlcc
+
+
+
