@@ -58,6 +58,8 @@ bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
+bindsym $mod+Tab exec --no-startup-id notify-send -u low -t 100 'HEY!' '<ALT><TAB>?!?!?  Do you think you are using Windows?'
+
 
 # alternatively, you can use the cursor keys:
 # bindsym $mod+Left focus left
@@ -176,7 +178,7 @@ bindsym XF86HomePage exec firefox
 bindsym XF86Calculator exec gnome-calculator
 bindsym Mod4+e exec nautilus --no-desktop
 
-set $mode_screenshot  Screenshot (w)indow, seletio(n), (s)creen
+set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
 mode "$mode_screenshot" 
 {
     bindsym w exec --no-startup-id scrot --focused && notify-send 'SCREENSHOT' 'Took screenshot of active window.'; mode "default"
@@ -190,6 +192,12 @@ mode "$mode_screenshot"
     bindsym Escape mode "default"
 }
 bindsym Print mode "$mode_screenshot"
+bindsym $mod+Shift+p mode "$mode_screenshot"
+
+mode "passthrough" {
+    bindsym $mod+Escape mode "default"
+}
+bindsym $mod+Escape mode "passthrough"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -210,6 +218,11 @@ mode "resize" {
         bindsym j resize grow height 10 px or 10 ppt
         bindsym k resize shrink height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
+
+        bindsym - resize shrink width 10 px or 10 ppt
+        bindsym _ resize grow height 10 px or 10 ppt
+        bindsym = resize grow width 10 px or 10 ppt
+        bindsym + resize shrink height 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
         # bindsym Left resize shrink width 10 px or 10 ppt
