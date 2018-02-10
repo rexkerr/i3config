@@ -20,9 +20,8 @@ set $mod Mod1
 font pango:monospace 8
 
 # class         border   bg      text  indicator  child_brder
-client.focused #FF0000 #CC0000 #ffffff #2e9ef4     #285577
-# new_window normal 4
-# new_float normal  4
+client.focused #555555 #555555 #FFFFFF #2E9EF4     #CC0000
+
 new_window pixel 4
 new_float pixel  4
 
@@ -142,8 +141,8 @@ bindsym $mod+Control+Shift+9 move container to workspace 9; workspace 9
 bindsym $mod+Control+Shift+0 move container to workspace 10; workspace 10
 
 # lock the screen
-bindsym $mod+Control+l exec i3lock -e -f
-bindsym Mod4+l exec i3lock -e -f
+bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
+bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
 
 # Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
@@ -155,26 +154,29 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20
 bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 
+# Show a calendar
+bindsym $mod+c exec zenity --calendar
 
 
 set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
-    bindsym e exec xrandr --output HDMI-1-2 --left-of eDP-1-1; mode "default"
-    bindsym x exec xrandr --output HDMI-1-2 --auto --output eDP-1-1 --off; mode "default"
-    bindsym i exec xrandr --output HDMI-1-2 --off --output eDP-1-1 --auto; mode "default"
+    bindsym e exec xrandr --output HDMI-1-2 --primary --auto --left-of eDP-1-1 --auto; mode "default"
+    bindsym x exec xrandr --output HDMI-1-2 --primary --auto --output eDP-1-1 --off; mode "default"
+    bindsym i exec xrandr --output HDMI-1-2 --off --output eDP-1-1 --primary --auto; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym XF86Display mode "$mode_screens"
+bindsym XF86Display exec xrandr --auto;mode "default"
 bindsym $mod+s mode "$mode_screens"
 
 # Application controls
-bindsym XF86HomePage exec firefox
+bindsym XF86HomePage exec firefox-esr
 bindsym XF86Calculator exec gnome-calculator
 bindsym Mod4+e exec nautilus --no-desktop
+bindsym $mod+Control+e exec nautilus --no-desktop
 
 set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
 mode "$mode_screenshot" 
@@ -238,7 +240,7 @@ bindsym $mod+r mode "resize"
 
 set $mode_system System (l)ock, (e)xit, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
-    bindsym l exec --no-startup-id i3lock -e -f; mode "default"
+    bindsym l exec --no-startup-id i3lock -e -f -i ~/.lockscreen.png; mode "default"
     bindsym e exit exec --no-startup-id i3-msg exit; mode "default"
     bindsym s exec --no-startup-id systemctl suspend; mode "default"
     bindsym h exec --no-startup-id systemctl hibernate; mode "default"
@@ -260,17 +262,21 @@ bar {
 }
 
 exec --no-startup-id xsetroot -solid "#303030"
-exec --no-startup-id xautolock -time 15 -locker 'i3lock -e -f'
+exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -i ~/.lockscreen.png"
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
 exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
 
 # xprop to get class
+assign [class="Firefox"] 3
+assign [class="Firefox-esr"] 3
 assign [class="HipChat"] 9
 assign [class="Zeal"] 10
 
+exec --no-startup-id firefox-esr
 exec --no-startup-id zeal
 exec --no-startup-id hipchat4
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
+for_window [class="Bcompare"] fullscreen enable
