@@ -174,7 +174,7 @@ bindsym XF86Display mode "$mode_screens"
 bindsym $mod+s mode "$mode_screens"
 
 # Application controls
-bindsym XF86HomePage exec firefox
+bindsym XF86HomePage exec firefox-esr
 bindsym XF86Calculator exec gnome-calculator
 bindsym Mod4+e exec nautilus --no-desktop
 
@@ -262,15 +262,17 @@ bar {
 }
 
 exec --no-startup-id xsetroot -solid "#303030"
-exec --no-startup-id xautolock -time 15 -locker 'i3lock -e -f'
+# exec --no-startup-id xautolock -time 15 -locker 'i3lock -e -f'
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
 exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
 
 # xprop to get class
+assign [class="Firefox-esr"] 3
 assign [class="HipChat"] 9
 assign [class="Zeal"] 10
 
+exec --no-startup-id firefox-esr
 exec --no-startup-id zeal
 exec --no-startup-id hipchat4
 
