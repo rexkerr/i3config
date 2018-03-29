@@ -42,6 +42,9 @@ floating_modifier $mod
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
+# start the "One True Editor"
+bindsym $mod+Shift+Return exec gvim
+
 # kill focused window
 bindsym $mod+Shift+q kill
 
@@ -161,9 +164,9 @@ bindsym $mod+c exec zenity --calendar
 set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
-    bindsym e exec xrandr --output HDMI-1-2 --primary --auto --left-of eDP-1-1 --auto; mode "default"
-    bindsym x exec xrandr --output HDMI-1-2 --primary --auto --output eDP-1-1 --off; mode "default"
-    bindsym i exec xrandr --output HDMI-1-2 --off --output eDP-1-1 --primary --auto; mode "default"
+    bindsym e exec xrandr --output HDMI2 --primary --auto --left-of eDP1 --auto; mode "default"
+    bindsym x exec xrandr --output HDMI2 --primary --auto --output eDP1 --off; mode "default"
+    bindsym i exec xrandr --output HDMI2 --off --output eDP1 --primary --auto; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -273,13 +276,14 @@ exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
 # xprop to get class
 assign [class="Firefox"] 3
 assign [class="Firefox-esr"] 3
-assign [class="HipChat"] 9
+assign [class="Slack"] 9
 assign [class="Zeal"] 10
 
 exec --no-startup-id firefox-esr
 exec --no-startup-id zeal
-exec --no-startup-id hipchat4
+exec --no-startup-id slack
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
 for_window [class="Bcompare"] fullscreen enable
+
