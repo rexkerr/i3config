@@ -36,9 +36,6 @@ new_float pixel  4
 # X core fonts rendering does not support right-to-left and this being a bitmap
 # font, it doesn’t scale on retina/hidpi displays.
 
-# Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
-
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
@@ -74,6 +71,10 @@ bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
+
+# move current workspace between monitors
+bindsym $mod+Control+Shift+h move workspace to output left
+bindsym $mod+Control+Shift+l move workspace to output right
 
 # alternatively, you can use the cursor keys:
 # bindsym $mod+Shift+Left move left
@@ -151,6 +152,9 @@ bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute 0 toggle
 # bindsym XF86AudioMicMute exec --no-startup-id pactl <TODO>
 
 # Screen controls
@@ -161,12 +165,18 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal
+set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal, (1) office, (2) office
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
-    bindsym e exec xrandr --output HDMI2 --primary --auto --left-of eDP1 --auto; mode "default"
-    bindsym x exec xrandr --output HDMI2 --primary --auto --output eDP1 --off; mode "default"
-    bindsym i exec xrandr --output HDMI2 --off --output eDP1 --primary --auto; mode "default"
+    bindsym e exec xrandr --output HDMI-1-2 --primary --auto --left-of eDP-1-1 --auto; mode "default"
+    bindsym x exec xrandr --output HDMI-1-2 --primary --auto --output eDP-1-1 --off; mode "default"
+    bindsym i exec xrandr --output HDMI-1-2 --off --output DP-1-2-1 --off --output DP-1-2-2 --off --output eDP-1-1 --primary --auto; mode "default"
+    bindsym 1 exec xrandr --output eDP-1-1 --off --output DP-1-2-1 --auto --primary; mode "default"
+    bindsym 2 exec xrandr --output eDP-1-1 --off --output DP-1-2-1 --auto --output DP-1-2-2 --primary --auto --left-of DP-1-2-1; mode "default"
+
+# eDP-1-1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 344mm x 194mm
+# DP-1-2-1 connected (normal left inverted right x axis y axis)
+# DP-1-2-2 connected (normal left inverted right x axis y axis)
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -180,6 +190,7 @@ bindsym XF86HomePage exec firefox-esr
 bindsym XF86Calculator exec gnome-calculator
 bindsym Mod4+e exec nautilus --no-desktop
 bindsym $mod+Control+e exec nautilus --no-desktop
+bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
 
 set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
 mode "$mode_screenshot" 
@@ -211,27 +222,26 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
-
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
+        # general resizing
         bindsym h resize shrink width 10 px or 10 ppt
         bindsym j resize grow height 10 px or 10 ppt
         bindsym k resize shrink height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
 
-        bindsym - resize shrink width 10 px or 10 ppt
-        bindsym _ resize grow height 10 px or 10 ppt
-        bindsym = resize grow width 10 px or 10 ppt
-        bindsym + resize shrink height 10 px or 10 ppt
+        # finer resizing (hold shift)
+        bindsym Shift+h resize shrink width 5 px or 5 ppt
+        bindsym Shift+j resize grow height 5 px or 5 ppt
+        bindsym Shift+k resize shrink height 5 px or 5 ppt
+        bindsym Shift+l resize grow width 5 px or 5 ppt
 
-        # same bindings, but for the arrow keys
-        # bindsym Left resize shrink width 10 px or 10 ppt
-        # bindsym Down resize grow height 10 px or 10 ppt
-        # bindsym Up resize shrink height 10 px or 10 ppt
-        # bindsym Right resize grow width 10 px or 10 ppt
+        # These don't seem to work yet, but the idea is to have a tall and wide
+        # mode, which maximize as much as possible with one keypress
+        bindsym t resize grow height 10000; mode "default"
+        bindsym w resize grow width 10000; mode "default"
+
+        # Only for floats, size to a 1080 screen, even on larger monitor, and
+        # center it: a, for "app"
+        bindsym a resize set 1920 px 1080 px; move position center;mode "default"
 
         # back to normal: Enter or Escape
         bindsym Return mode "default"
@@ -259,6 +269,11 @@ bindsym $mod+Shift+BackSpace mode "$mode_system"
 # Start the VPN connection
 bindsym $mod+Control+Shift+v exec --no-startup-id nmcli con up uuid $(nmcli c | grep vpn | cut -b 27-62)
 
+# Some mouse stuff
+floating_modifier $mod
+bindsym --whole-window $mod+button2 kill
+bindsym --whole-window $mod+button3 floating toggle
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -271,19 +286,26 @@ exec --no-startup-id xsetroot -solid "#303030"
 exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -i ~/.lockscreen.png"
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
-exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
+# natural scroll on Synaptic Touchpad (sometimes one, sometimes the other... not sure why)
+exec --no-startup-id synclient VertScrollDelta=-113
+# exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
 
 # xprop to get class
 assign [class="Firefox"] 3
 assign [class="Firefox-esr"] 3
+assign [class="Evolution"] 8
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
 
 exec --no-startup-id firefox-esr
-exec --no-startup-id zeal
 exec --no-startup-id slack
+exec --no-startup-id zeal
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
 for_window [class="Bcompare"] fullscreen enable
+
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+no_focus [window_role="popup"]
 
