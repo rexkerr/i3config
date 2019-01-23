@@ -22,8 +22,8 @@ font pango:monospace 8
 # class         border   bg      text  indicator  child_brder
 client.focused #555555 #555555 #FFFFFF #2E9EF4     #CC0000
 
-new_window pixel 4
-new_float pixel  4
+default_border pixel 2
+default_floating_border pixel 2
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -50,7 +50,7 @@ bindsym $mod+p exec dmenu_run
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+Control+p exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym $mod+h focus left
@@ -58,13 +58,6 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 bindsym $mod+Tab exec --no-startup-id notify-send -u low -t 100 'HEY!' '<ALT><TAB>?!?!?  Do you think you are using Windows?'
-
-
-# alternatively, you can use the cursor keys:
-# bindsym $mod+Left focus left
-# bindsym $mod+Down focus down
-# bindsym $mod+Up focus up
-# bindsym $mod+Right focus right
 
 # move focused window
 bindsym $mod+Shift+h move left
@@ -75,12 +68,6 @@ bindsym $mod+Shift+l move right
 # move current workspace between monitors
 bindsym $mod+Control+Shift+h move workspace to output left
 bindsym $mod+Control+Shift+l move workspace to output right
-
-# alternatively, you can use the cursor keys:
-# bindsym $mod+Shift+Left move left
-# bindsym $mod+Shift+Down move down
-# bindsym $mod+Shift+Up move up
-# bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
 bindsym $mod+i split h
@@ -101,6 +88,12 @@ bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
+
+# Make the currently focused window a scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -149,13 +142,34 @@ bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
 bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
 
 # Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
-bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume 0 +5%
-bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume 0 -5%
-bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute 0 toggle
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
+bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
+bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
+bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
 # bindsym XF86AudioMicMute exec --no-startup-id pactl <TODO>
+
+# Pianobar (Pandora)
+# 
+# Note that for this to work you need to fist do this:
+# 
+#    $ mkfifo ~/.config/pianobar/ctl
+# 
+bindsym $mod+Control+Shift+p mode "$mode_pianobar"
+set $mode_pianobar Pianobar:  <space> play/pause || (n)ext || (+) love || (-) ban || (t)ired
+mode "$mode_pianobar" {
+    bindsym space exec bash -c "echo -n ' ' > ~/.config/pianobar/ctl";mode "default"
+    bindsym n exec bash -c "echo -n 'n' > ~/.config/pianobar/ctl";mode "default"
+    bindsym - exec bash -c "echo -n '-' > ~/.config/pianobar/ctl";mode "default"
+    bindsym + exec bash -c "echo -n '+' > ~/.config/pianobar/ctl";mode "default"
+    bindsym t exec bash -c "echo -n 't' > ~/.config/pianobar/ctl";mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
 
 # Screen controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20
@@ -165,18 +179,15 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, home (e)xtended, home e(x)ternal, (i)nternal, (1) office, (2) office
+set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, <--(l)eft, (r)ight-->
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
-    bindsym e exec xrandr --output HDMI-1-2 --primary --auto --left-of eDP-1-1 --auto; mode "default"
-    bindsym x exec xrandr --output HDMI-1-2 --primary --auto --output eDP-1-1 --off; mode "default"
-    bindsym i exec xrandr --output HDMI-1-2 --off --output DP-1-2-1 --off --output DP-1-2-2 --off --output eDP-1-1 --primary --auto; mode "default"
-    bindsym 1 exec xrandr --output eDP-1-1 --off --output DP-1-2-1 --auto --primary; mode "default"
-    bindsym 2 exec xrandr --output eDP-1-1 --off --output DP-1-2-1 --auto --output DP-1-2-2 --primary --auto --left-of DP-1-2-1; mode "default"
-
-# eDP-1-1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 344mm x 194mm
-# DP-1-2-1 connected (normal left inverted right x axis y axis)
-# DP-1-2-2 connected (normal left inverted right x axis y axis)
+    bindsym x exec selmon ext; mode "default"
+    bindsym i exec selmon int; mode "default"
+    bindsym m exec selmon mirror 1080; mode "default"
+    bindsym p exec selmon ext 1080; mode "default"
+    bindsym l exec selmon left; mode "default"
+    bindsym r exec selmon right; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -186,11 +197,13 @@ bindsym XF86Display exec xrandr --auto;mode "default"
 bindsym $mod+s mode "$mode_screens"
 
 # Application controls
-bindsym XF86HomePage exec firefox-esr
-bindsym XF86Calculator exec gnome-calculator
+# bindsym XF86HomePage exec firefox-esr
+bindsym XF86HomePage exec google-chrome
+bindsym XF86Calculator exec speedcrunch
 bindsym Mod4+e exec nautilus --no-desktop
 bindsym $mod+Control+e exec nautilus --no-desktop
 bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
 
 set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
 mode "$mode_screenshot" 
@@ -280,24 +293,43 @@ bar {
         status_command i3status
         tray_output primary
         font pango:monospace 10
+        bindsym button4 nop # vertical scroll
+        bindsym button5 nop # vertical scroll
+        bindsym button6 nop # horizontal scroll
+        bindsym button7 nop # horizontal scroll
 }
 
 exec --no-startup-id xsetroot -solid "#303030"
 exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -i ~/.lockscreen.png"
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
+exec --no-startup-id pasystray
 # natural scroll on Synaptic Touchpad (sometimes one, sometimes the other... not sure why)
-exec --no-startup-id synclient VertScrollDelta=-113
+# exec --no-startup-id synclient VertScrollDelta=-113
 # exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
+# set up the scroll direction for natural scrolling
+exec --no-startup-id synclient VertScrollDelta=-113 HorizTwoFingerScroll=1 HorizScrollDelta=-114
+
+# disable touchpad while typing (-t), but allow with modifiers (-k)
+exec --no-startup-id syndaemon -t -k -d
 
 # xprop to get class
 assign [class="Firefox"] 3
 assign [class="Firefox-esr"] 3
+assign [class="Google-chrome" instance="google-chrome"] 3
 assign [class="Evolution"] 8
+
+assign [class="Google-chrome" instance="outlook.office.com__calendar"] 8
+assign [class="Google-chrome" instance="outlook.office.com__mail_inbox"] 8
+
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
 
-exec --no-startup-id firefox-esr
+# exec --no-startup-id firefox-esr
+exec --no-startup-id google-chrome
+# exec --no-startup-id evolution
+exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/mail/inbox/
+exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/calendar
 exec --no-startup-id slack
 exec --no-startup-id zeal
 
@@ -305,7 +337,18 @@ exec --no-startup-id zeal
 # for_window [class="<CLASS>"] fullscreen disable
 for_window [class="Bcompare"] fullscreen enable
 
+# Some windows I don't want to be too big on startup (requires i3 v4.15+)
+for_window [class="Keepassx"] resize set 0 ppt 20 ppt
+for_window [class="keepassxc"] resize set 0 ppt 20 ppt
+
+# Some windows are best if they float
+for_window [class="Speedcrunch"] floating enable
+for_window [class="VirtualBox"] floating enable
+
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
-no_focus [window_role="popup"]
+no_focus [window_role="pop-up"]
+
+# stack the chrome window on workspace 8 (inbox & calendar)
+exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
 
