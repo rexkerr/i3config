@@ -239,8 +239,8 @@ bindsym XF86HomePage exec google-chrome
 bindsym XF86Calculator exec speedcrunch
 bindsym Mod4+e exec nautilus --no-desktop
 bindsym $mod+Control+e exec nautilus --no-desktop
-bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center sound
-bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center sound
+bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
 
 set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
 mode "$mode_screenshot" 
