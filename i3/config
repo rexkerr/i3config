@@ -64,7 +64,8 @@ bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
-bindsym $mod+Tab exec --no-startup-id notify-send -u low -t 100 'HEY!' '<ALT><TAB>?!?!?  Do you think you are using Windows?'
+bindsym $mod+Tab workspace next
+bindsym $mod+shift+Tab workspace prev
 
 # move focused window
 bindsym $mod+Shift+h move left
@@ -178,6 +179,11 @@ bindsym $mod+Mod4+Control+Shift+0 move container to workspace 20; workspace 20
 bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
 bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
 
+# Clipboard Stuff
+#
+bindsym $mod+Shift+Insert exec --no-startup-id notify-send CLIPBOARD "`xclip -o -selection clipboard | head -c 100`" && notify-send SELECTION "`xclip -o -selection primary | head -c 100`"
+bindsym $mod+Control+Shift+Insert exec --no-startup-id display_clipboard_as_qr
+
 # Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
@@ -216,13 +222,14 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, <--(l)eft, (r)ight-->
+set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, (s)hare, <--(l)eft, (r)ight-->
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
     bindsym x exec selmon ext; mode "default"
     bindsym i exec selmon int; mode "default"
     bindsym m exec selmon mirror 1080; mode "default"
     bindsym p exec selmon ext 1080; mode "default"
+    bindsym s exec selmon ext 720; mode "default"
     bindsym l exec selmon left; mode "default"
     bindsym r exec selmon right; mode "default"
 
@@ -381,6 +388,7 @@ for_window [class="keepassxc"] resize set 0 ppt 20 ppt
 # Some windows are best if they float
 for_window [class="Speedcrunch"] floating enable
 for_window [class="VirtualBox"] floating enable
+for_window [class="Display"] floating enable move position center
 
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
@@ -388,6 +396,9 @@ no_focus [window_role="pop-up"]
 
 # stack the chrome window on workspace 8 (inbox & calendar)
 exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
+
+# support for dynamic bookmarks
+bindsym $mod+Shift+b exec dmenu_bookmarks
 
 #####################################################
 # DO NOT ADD TO GITHUB 
@@ -405,24 +416,38 @@ for_window [class="Intra-Operative Navigation App" title="Form"] floating disabl
 # run my script to slow the mouse pointer for my external mouse
 exec --no-startup-id slowmouse
 
+# run my script to configure my magic mouse
+exec --no-startup-id magmouse
+
 # disable the trackpoint
 # exec --no-startup-id xinput set-prop "TPPS/2 IBM TrackPoint" "Device Enabled" 0
 exec --no-startup-id xinput set-prop "ETPS/2 Elantech TrackPoint" "Device Enabled" 0
 
-set $bookmarks Bookmarks (o)utlook, (b)itbucket, (c)onfluence, (j)ira, (J)enkins, (d)icom browser, (M)ail, (C)alendar
-mode "$bookmarks" {
-    bindsym o exec xdg-open https://outlook.office.com/owa/?path=/mail/inbox;mode default
-    bindsym b exec xdg-open http://bitbucket.org;mode default
-    bindsym c exec xdg-open https://aurisrobotics.atlassian.net/wiki/discover/all-updates;mode default
-    bindsym j exec xdg-open https://aurisrobotics.atlassian.net/secure/RapidBoard.jspa?rapidView=49&projectKey=MSW&quickFilter=206;mode default
-    bindsym Shift+j exec xdg-open http://52.40.228.173:8080/job/iplatform/job/build-feature/;mode default
-    bindsym d exec xdg-open https://dicom.innolitics.com/ciods;mode default
-    bindsym Shift+m exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/mail/inbox/; mode default
-    bindsym Shift+c exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/calendar; mode default
+set $bluetooth (a)irpods, (m)ouse, (t)rackpad
+mode "$bluetooth" {
+    bindsym a exec bt-device -c `bt-device -l | awk -F"[()]" '/AirPods/ {print $2}'`; mode "default"
+    bindsym m exec bt-device -c `bt-device -l | awk -F"[()]" '/Mouse/ {print $2}'`; mode "default"
+    bindsym t exec bt-device -c `bt-device -l | awk -F"[()]" '/Trackpad/ {print $2}'`; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+Shift+b mode "$bookmarks"
+bindsym $mod+Control+Shift+b mode "$bluetooth"
 
+#----------------------------------------------------------------------
+# Always float test windows
+# https://faq.i3wm.org/question/61/forcing-windows-as-always-floating.1.html
+# for_window [class="GTestCoreApp" instance="Test_IntraOpDashboardUro"] floating enable
+# for_window [class="GTestCoreApp" instance="Test_VtkGui"] floating enable
+for_window [instance="Visualization Toolkit - OpenGL"] floating enable
+for_window [class="GTestCoreApp"] floating enable
+for_window [class="GTestApp"] floating enable
+for_window [class="Form"] floating enable
+for_window [class="Test*"] floating enable
+
+no_focus [class="GTestCoreApp"]
+no_focus [class="GTestApp"]
+no_focus [class="GTestCoreApp"]
+no_focus [class="Form"]
+no_focus [class="Test*"]
