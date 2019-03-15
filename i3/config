@@ -57,7 +57,8 @@ bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
-bindsym $mod+Tab exec --no-startup-id notify-send -u low -t 100 'HEY!' '<ALT><TAB>?!?!?  Do you think you are using Windows?'
+bindsym $mod+Tab workspace next
+bindsym $mod+shift+Tab workspace prev
 
 # move focused window
 bindsym $mod+Shift+h move left
@@ -141,6 +142,11 @@ bindsym $mod+Control+Shift+0 move container to workspace 10; workspace 10
 bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
 bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
 
+# Clipboard Stuff
+#
+bindsym $mod+Shift+Insert exec --no-startup-id notify-send CLIPBOARD "`xclip -o -selection clipboard | head -c 100`" && notify-send SELECTION "`xclip -o -selection primary | head -c 100`"
+bindsym $mod+Control+Shift+Insert exec --no-startup-id display_clipboard_as_qr
+
 # Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
@@ -179,13 +185,14 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, <--(l)eft, (r)ight-->
+set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, (s)hare, <--(l)eft, (r)ight-->
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
     bindsym x exec selmon ext; mode "default"
     bindsym i exec selmon int; mode "default"
     bindsym m exec selmon mirror 1080; mode "default"
     bindsym p exec selmon ext 1080; mode "default"
+    bindsym s exec selmon ext 720; mode "default"
     bindsym l exec selmon left; mode "default"
     bindsym r exec selmon right; mode "default"
 
@@ -344,6 +351,7 @@ for_window [class="keepassxc"] resize set 0 ppt 20 ppt
 # Some windows are best if they float
 for_window [class="Speedcrunch"] floating enable
 for_window [class="VirtualBox"] floating enable
+for_window [class="Display"] floating enable move position center
 
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
@@ -351,4 +359,7 @@ no_focus [window_role="pop-up"]
 
 # stack the chrome window on workspace 8 (inbox & calendar)
 exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
+
+# support for dynamic bookmarks
+bindsym $mod+Shift+b exec dmenu_bookmarks
 
