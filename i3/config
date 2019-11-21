@@ -38,6 +38,8 @@ default_floating_border pixel 2
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+# fun toys
+bindsym $mod+Control+Shift+Return exec cool-retro-term
 
 # start the "One True Editor"
 bindsym $mod+Shift+Return exec gvim
@@ -97,10 +99,10 @@ bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus parent
 
 # focus the child container
-bindsym $mod+d focus child
+bindsym $mod+Shift+d focus child
 
 # switch to workspace
 bindsym $mod+1 workspace 1
@@ -151,6 +153,7 @@ bindsym $mod+Control+Shift+Insert exec --no-startup-id display_clipboard_as_qr
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute `pacmd list-sources | awk '/\* index:/{print $3}'` toggle
 bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
@@ -170,6 +173,25 @@ mode "$mode_pianobar" {
     bindsym - exec bash -c "echo -n '-' > ~/.config/pianobar/ctl";mode "default"
     bindsym + exec bash -c "echo -n '+' > ~/.config/pianobar/ctl";mode "default"
     bindsym t exec bash -c "echo -n 't' > ~/.config/pianobar/ctl";mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# MPlayer
+# 
+# Note that for this to work you need to fist do this:
+# 
+#    $ mkfifo ~/.config/mplayer/ctl
+# 
+bindsym $mod+Control+Mod4+p mode "$mode_mplayer"
+set $mode_mplayer MPlayer:  <space> play/pause || (n)ext || (p)revious || (q)uit
+mode "$mode_mplayer" {
+    bindsym space exec bash -c "echo "pause" > ~/.config/mplayer/ctl";mode "default"
+    bindsym n exec bash -c "echo 'pt_step 1' > ~/.config/mplayer/ctl";mode "default"
+    bindsym p exec bash -c "echo 'pt_step -1' > ~/.config/mplayer/ctl";mode "default"
+    bindsym q exec bash -c "echo 'quit' > ~/.config/mplayer/ctl";mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -205,19 +227,31 @@ bindsym $mod+s mode "$mode_screens"
 
 # Application controls
 # bindsym XF86HomePage exec firefox-esr
-bindsym XF86HomePage exec google-chrome
+bindsym XF86HomePage exec google-chrome --force-dark-mode
 bindsym XF86Calculator exec speedcrunch
+bindsym $mod+Control+c exec speedcrunch
 bindsym Mod4+e exec nautilus --no-desktop
 bindsym $mod+Control+e exec nautilus --no-desktop
-bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
-bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+bindsym $mod+Control+Shift+c exec dmenu_bash_command
+bindsym $mod+Shift+m exec joinmeeting
+# -------------
+# Ubuntu 16.04 settings
+# -------------
+# bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+# bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+# -------------
+# Ubuntu 18.04 settings
+# -------------
+bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
+bindsym XF86Tools exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 
-set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
+set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen, (t)ool
 mode "$mode_screenshot" 
 {
     bindsym w exec --no-startup-id scrot --focused && notify-send 'SCREENSHOT' 'Took screenshot of active window.'; mode "default"
     bindsym --release n exec scrot --select && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
     bindsym s exec --no-startup-id scrot && notify-send 'SCREENSHOT' 'Took fullscreen screenshot'; mode "default"
+    bindsym t exec --no-startup-id gnome-screenshot --interactive; mode "default"
     # bindsym --release n exec import ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
     # bindsym --release s exec import -window root ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
 
@@ -244,20 +278,39 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 mode "resize" {
         # general resizing
         bindsym h resize shrink width 10 px or 10 ppt
-        bindsym j resize grow height 10 px or 10 ppt
-        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym j resize shrink height 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
 
-        # finer resizing (hold shift)
-        bindsym Shift+h resize shrink width 5 px or 5 ppt
-        bindsym Shift+j resize grow height 5 px or 5 ppt
-        bindsym Shift+k resize shrink height 5 px or 5 ppt
-        bindsym Shift+l resize grow width 5 px or 5 ppt
+        # faster resizing
+        bindsym Control+h resize shrink width 20 px or 20 ppt
+        bindsym Control+j resize shrink height 20 px or 20 ppt
+        bindsym Control+k resize grow height 20 px or 20 ppt
+        bindsym Control+l resize grow width 20 px or 20 ppt
 
-        # These don't seem to work yet, but the idea is to have a tall and wide
-        # mode, which maximize as much as possible with one keypress
-        bindsym t resize grow height 10000; mode "default"
-        bindsym w resize grow width 10000; mode "default"
+        # finer resizing (hold shift)
+        bindsym Shift+h resize shrink width 2 px or 2 ppt
+        bindsym Shift+j resize shrink height 2 px or 2 ppt
+        bindsym Shift+k resize grow height 2 px or 2 ppt
+        bindsym Shift+l resize grow width 2 px or 2 ppt
+
+        # alternate general resizing
+        bindsym n resize shrink width 10 px or 10 ppt
+        bindsym s resize shrink height 10 px or 10 ppt
+        bindsym t resize grow height 10 px or 10 ppt
+        bindsym w resize grow width 10 px or 10 ppt
+
+        # alternate faster resizing
+        bindsym Control+n resize shrink width 20 px or 20 ppt
+        bindsym Control+s resize shrink height 20 px or 20 ppt
+        bindsym Control+t resize grow height 20 px or 20 ppt
+        bindsym Control+w resize grow width 20 px or 20 ppt
+
+        # alternate finer resizing (hold shift)
+        bindsym Shift+n resize shrink width 2 px or 2 ppt
+        bindsym Shift+s resize shrink height 2 px or 2 ppt
+        bindsym Shift+t resize grow height 2 px or 2 ppt
+        bindsym Shift+w resize grow width 2 px or 2 ppt
 
         # Only for floats, size to a 1080 screen, even on larger monitor, and
         # center it: a, for "app"
@@ -291,8 +344,8 @@ bindsym $mod+Control+Shift+v exec --no-startup-id nmcli con up uuid $(nmcli c | 
 
 # Some mouse stuff
 floating_modifier $mod
-bindsym --whole-window $mod+button2 kill
-bindsym --whole-window $mod+button3 floating toggle
+bindsym --whole-window Control+button2 kill
+bindsym --whole-window Control+button3 floating toggle
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -331,14 +384,17 @@ assign [class="Google-chrome" instance="outlook.office.com__mail_inbox"] 8
 
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
+assign [class="Google-chrome" instance="devdocs.io"] 10
+assign [class="Gnome-terminal" title="DI.FM"] 10
 
 # exec --no-startup-id firefox-esr
-exec --no-startup-id google-chrome
+exec --no-startup-id google-chrome --force-dark-mode
 # exec --no-startup-id evolution
-exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/mail/inbox/
-exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/calendar
+exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/mail/inbox/
+exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/calendar
 exec --no-startup-id slack
-exec --no-startup-id zeal
+# exec --no-startup-id zeal
+exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://devdocs.io
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
@@ -349,7 +405,8 @@ for_window [class="Keepassx"] resize set 0 ppt 20 ppt
 for_window [class="keepassxc"] resize set 0 ppt 20 ppt
 
 # Some windows are best if they float
-for_window [class="Speedcrunch"] floating enable
+for_window [class="Speedcrunch"] floating enable # older versions, can remove soon
+for_window [class="SpeedCrunch"] floating enable
 for_window [class="VirtualBox"] floating enable
 for_window [class="Display"] floating enable move position center
 
@@ -362,4 +419,10 @@ exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
 
 # support for dynamic bookmarks
 bindsym $mod+Shift+b exec dmenu_bookmarks
+
+# support for screen night-shift
+exec --no-startup-id redshift
+
+# my posture reminder notification at random intervals
+exec --no-startup-id posture_reminder
 
