@@ -141,8 +141,8 @@ bindsym $mod+Control+Shift+9 move container to workspace 9; workspace 9
 bindsym $mod+Control+Shift+0 move container to workspace 10; workspace 10
 
 # lock the screen
-bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
-bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
+bindsym $mod+Control+l exec xautolock -locknow
+bindsym Mod4+l exec xautolock -locknow
 
 # Clipboard Stuff
 #
@@ -166,13 +166,14 @@ bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd lis
 #    $ mkfifo ~/.config/pianobar/ctl
 # 
 bindsym $mod+Control+Shift+p mode "$mode_pianobar"
-set $mode_pianobar Pianobar:  <space> play/pause || (n)ext || (+) love || (-) ban || (t)ired
+set $mode_pianobar Pianobar:  <space> play/pause || (n)ext || (+) love || (-) ban || (t)ired || (l)aunch
 mode "$mode_pianobar" {
     bindsym space exec bash -c "echo -n ' ' > ~/.config/pianobar/ctl";mode "default"
     bindsym n exec bash -c "echo -n 'n' > ~/.config/pianobar/ctl";mode "default"
     bindsym - exec bash -c "echo -n '-' > ~/.config/pianobar/ctl";mode "default"
     bindsym + exec bash -c "echo -n '+' > ~/.config/pianobar/ctl";mode "default"
     bindsym t exec bash -c "echo -n 't' > ~/.config/pianobar/ctl";mode "default"
+    bindsym l exec bash -c "gnome-terminal -e pianobar";mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -201,7 +202,9 @@ mode "$mode_mplayer" {
 
 # Screen controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20
+bindsym Shift+XF86MonBrightnessUp exec xbacklight -set 100 -time 1500 -steps 1000
 bindsym XF86MonBrightnessDown exec xbacklight -dec 20
+bindsym Shift+XF86MonBrightnessDown exec xbacklight -set 20 -time 1500 -steps 1000
 
 # Show a calendar
 bindsym $mod+c exec zenity --calendar
@@ -245,7 +248,7 @@ bindsym $mod+Shift+m exec joinmeeting
 bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 bindsym XF86Tools exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 
-set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen, (t)ool
+set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen, (t)ool, (f)lameshot
 mode "$mode_screenshot" 
 {
     bindsym w exec --no-startup-id scrot --focused && notify-send 'SCREENSHOT' 'Took screenshot of active window.'; mode "default"
@@ -254,6 +257,7 @@ mode "$mode_screenshot"
     bindsym t exec --no-startup-id gnome-screenshot --interactive; mode "default"
     # bindsym --release n exec import ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
     # bindsym --release s exec import -window root ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+    bindsym f exec --no-startup-id flameshot gui
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -326,7 +330,7 @@ bindsym $mod+r mode "resize"
 
 set $mode_system System (l)ock, (e)xit, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
-    bindsym l exec --no-startup-id i3lock -e -f -i ~/.lockscreen.png; mode "default"
+    bindsym l exec --no-startup-id xautolock -locknow; mode "default"
     bindsym e exit exec --no-startup-id i3-msg exit; mode "default"
     bindsym s exec --no-startup-id systemctl suspend; mode "default"
     bindsym h exec --no-startup-id systemctl hibernate; mode "default"
@@ -359,8 +363,9 @@ bar {
         bindsym button7 nop # horizontal scroll
 }
 
+exec --no-startup-id xcompmgr
 exec --no-startup-id xsetroot -solid "#303030"
-exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -i ~/.lockscreen.png"
+exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -t -i ~/.lockscreen.png"
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
 exec --no-startup-id pasystray
@@ -373,28 +378,40 @@ exec --no-startup-id synclient VertScrollDelta=-113 HorizTwoFingerScroll=1 Horiz
 # disable touchpad while typing (-t), but allow with modifiers (-k)
 exec --no-startup-id syndaemon -t -k -d
 
-# xprop to get class
+# Assign windows to particular virtual desktops
+#
+#  -- use xprop to get window class
+#
 assign [class="Firefox"] 3
 assign [class="Firefox-esr"] 3
 assign [class="Google-chrome" instance="google-chrome"] 3
+assign [class="zoom"] 7
+assign [class="ringcentral"] 7
+assign [class="Microsoft Teams"] 7
 assign [class="Evolution"] 8
 
 assign [class="Google-chrome" instance="outlook.office.com__calendar"] 8
+assign [class="outlook-calendar-app"] 8
 assign [class="Google-chrome" instance="outlook.office.com__mail_inbox"] 8
-
+assign [class="outlook-mail-app"] 8
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
 assign [class="Google-chrome" instance="devdocs.io"] 10
+assign [class="Navigator" title="DevDocs"] 10
 assign [class="Gnome-terminal" title="DI.FM"] 10
 
-# exec --no-startup-id firefox-esr
-exec --no-startup-id google-chrome --force-dark-mode
-# exec --no-startup-id evolution
-exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/mail/inbox/
-exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/calendar
+
+# #### ALWAYS ON APPS ###
 exec --no-startup-id slack
-# exec --no-startup-id zeal
-exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://devdocs.io
+# exec --no-startup-id google-chrome --force-dark-mode
+exec --no-startup-id firefox
+# exec --no-startup-id /usr/bin/flatpak run --branch=stable --arch=x86_64 --command=evolution org.gnome.Evolution -c tasks
+
+# ####  CHROME BASED  ###
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/mail/inbox/
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/calendar
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://devdocs.io
+
 
 # For windows that start in full-screen that I want to capture
 # for_window [class="<CLASS>"] fullscreen disable
@@ -403,11 +420,16 @@ for_window [class="Bcompare"] fullscreen enable
 # Some windows I don't want to be too big on startup (requires i3 v4.15+)
 for_window [class="Keepassx"] resize set 0 ppt 20 ppt
 for_window [class="keepassxc"] resize set 0 ppt 20 ppt
+for_window [class="zoom" title="Participants"] resize set 20 ppt 0 ppt
+for_window [class="zoom" title="Zoom Group Chat"] resize set 30 ppt 0 ppt
+for_window [class="ringcentral" title="Participants"] resize set 20 ppt 0 ppt
+for_window [class="ringcentral" title="Zoom Group Chat"] resize set 30 ppt 0 ppt
 
 # Some windows are best if they float
 for_window [class="Speedcrunch"] floating enable # older versions, can remove soon
 for_window [class="SpeedCrunch"] floating enable
-for_window [class="VirtualBox"] floating enable
+for_window [class="VirtualBox Machine"] floating disable
+for_window [class="VirtualBox Manager"] floating disable
 for_window [class="Display"] floating enable move position center
 
 for_window [window_type="dialog"] floating enable
@@ -415,7 +437,7 @@ for_window [window_type="menu"] floating enable
 no_focus [window_role="pop-up"]
 
 # stack the chrome window on workspace 8 (inbox & calendar)
-exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
+# exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
 
 # support for dynamic bookmarks
 bindsym $mod+Shift+b exec dmenu_bookmarks
@@ -424,5 +446,5 @@ bindsym $mod+Shift+b exec dmenu_bookmarks
 exec --no-startup-id redshift
 
 # my posture reminder notification at random intervals
-exec --no-startup-id posture_reminder
+# exec --no-startup-id posture_reminder
 
