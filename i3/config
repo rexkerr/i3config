@@ -1,10 +1,5 @@
 # This is my personal i3 configuration file.  
 #
-# I'm debating between switching to i3 since it's easier to configure, or stick
-# with xmonad because it's so fast, stable, and works well for me with almost
-# no customization (unlike i3, which required a bit of customization before I
-# was happy).
-#
 # This is based on the auto-generated i3 config, with my changes as a complete
 # newbie... they're not intended to be the advice of an experienced i3 user, so
 # proceed with caution if you choose to copy any of this. :-)
@@ -13,34 +8,34 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+# ALT as modifider
 set $mod Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace 8
 
-# class         border   bg      text  indicator  child_brder
+# class         border   bg      text  indicator  child_border
 client.focused #555555 #555555 #FFFFFF #2E9EF4     #CC0000
 
 default_border pixel 2
 default_floating_border pixel 2
 
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
-
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
+for_window [class=.*] border pixel 2
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+# fun toys
 
 # start the "One True Editor"
 bindsym $mod+Shift+Return exec gvim
+
+# light terminal
+# bindsym $mod+t exec xdotool key F10 Right Right Right Right Down Right Down Return
+bindsym $mod+t exec kitty +kitten themes --reload-in all Modus\ Operandi
+# dark terminal
+# bindsym $mod+Shift+t exec xdotool key F10 Right Right Right Right Down Right Return
+bindsym $mod+Shift+t exec kitty +kitten themes --reload-in all Default
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -97,10 +92,10 @@ bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus parent
 
 # focus the child container
-bindsym $mod+d focus child
+bindsym $mod+Shift+d focus child
 
 # switch to workspace
 bindsym $mod+1 workspace 1
@@ -113,6 +108,16 @@ bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
+bindsym $mod+Mod4+1 workspace 11
+bindsym $mod+Mod4+2 workspace 12
+bindsym $mod+Mod4+3 workspace 13
+bindsym $mod+Mod4+4 workspace 14
+bindsym $mod+Mod4+5 workspace 15
+bindsym $mod+Mod4+6 workspace 16
+bindsym $mod+Mod4+7 workspace 17
+bindsym $mod+Mod4+8 workspace 18
+bindsym $mod+Mod4+9 workspace 19
+bindsym $mod+Mod4+0 workspace 20
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
@@ -125,6 +130,16 @@ bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
+bindsym $mod+Mod4+Shift+1 move container to workspace 11
+bindsym $mod+Mod4+Shift+2 move container to workspace 12
+bindsym $mod+Mod4+Shift+3 move container to workspace 13
+bindsym $mod+Mod4+Shift+4 move container to workspace 14
+bindsym $mod+Mod4+Shift+5 move container to workspace 15
+bindsym $mod+Mod4+Shift+6 move container to workspace 16
+bindsym $mod+Mod4+Shift+7 move container to workspace 17
+bindsym $mod+Mod4+Shift+8 move container to workspace 18
+bindsym $mod+Mod4+Shift+9 move container to workspace 19
+bindsym $mod+Mod4+Shift+0 move container to workspace 20
 
 # move focused container to workspace and follow it 
 bindsym $mod+Control+Shift+1 move container to workspace 1; workspace 1
@@ -137,24 +152,56 @@ bindsym $mod+Control+Shift+7 move container to workspace 7; workspace 7
 bindsym $mod+Control+Shift+8 move container to workspace 8; workspace 8
 bindsym $mod+Control+Shift+9 move container to workspace 9; workspace 9
 bindsym $mod+Control+Shift+0 move container to workspace 10; workspace 10
+bindsym $mod+Mod4+Control+Shift+1 move container to workspace 11; workspace 11
+bindsym $mod+Mod4+Control+Shift+2 move container to workspace 12; workspace 12
+bindsym $mod+Mod4+Control+Shift+3 move container to workspace 13; workspace 13
+bindsym $mod+Mod4+Control+Shift+4 move container to workspace 14; workspace 14
+bindsym $mod+Mod4+Control+Shift+5 move container to workspace 15; workspace 15
+bindsym $mod+Mod4+Control+Shift+6 move container to workspace 16; workspace 16
+bindsym $mod+Mod4+Control+Shift+7 move container to workspace 17; workspace 17
+bindsym $mod+Mod4+Control+Shift+8 move container to workspace 18; workspace 18
+bindsym $mod+Mod4+Control+Shift+9 move container to workspace 19; workspace 19
+bindsym $mod+Mod4+Control+Shift+0 move container to workspace 20; workspace 20
 
 # lock the screen
-bindsym $mod+Control+l exec i3lock -e -f -i ~/.lockscreen.png
-bindsym Mod4+l exec i3lock -e -f -i ~/.lockscreen.png
+bindsym $mod+Control+l exec xautolock -locknow
+bindsym Mod4+l exec xautolock -locknow
+bindsym $mod+Mod4+l exec off_and_lock
 
 # Clipboard Stuff
 #
 bindsym $mod+Shift+Insert exec --no-startup-id notify-send CLIPBOARD "`xclip -o -selection clipboard | head -c 100`" && notify-send SELECTION "`xclip -o -selection primary | head -c 100`"
 bindsym $mod+Control+Shift+Insert exec --no-startup-id display_clipboard_as_qr
 
+bindsym Control+Mod4+$mod+c exec --no-startup-id copyq show clipboard
+bindsym Control+Mod4+v exec --no-startup-id copyq paste previous
+
 # Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute `pacmd list-sources | awk '/\* index:/{print $3}'` toggle
 bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
 bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
-# bindsym XF86AudioMicMute exec --no-startup-id pactl <TODO>
+
+
+bindsym $mod+Shift+s exec pavucontrol -t 3
+
+bindsym $mod+Control+v mode "$mode_appvolume"
+set $mode_appvolume Application Volume:  (z)oom- || (Z)oom+ || ctrl(Z)oom 100 || (p)ianobar- || (P)ianobar+ || ctrl(P)ianobar 100
+mode "$mode_appvolume" {
+    bindsym z exec adjust_app_volume ZOOM -10
+    bindsym Shift+z exec adjust_app_volume ZOOM +10
+    bindsym Control+z exec adjust_app_volume ZOOM 100
+    bindsym p exec adjust_app_volume pianobar -10
+    bindsym Shift+p exec adjust_app_volume pianobar +10
+    bindsym Control+p exec adjust_app_volume pianobar 100
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 # Pianobar (Pandora)
 # 
@@ -163,13 +210,33 @@ bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd lis
 #    $ mkfifo ~/.config/pianobar/ctl
 # 
 bindsym $mod+Control+Shift+p mode "$mode_pianobar"
-set $mode_pianobar Pianobar:  <space> play/pause || (n)ext || (+) love || (-) ban || (t)ired
+set $mode_pianobar Pianobar:  <space> play/pause || (n)ext || (+) love || (-) ban || (t)ired || (l)aunch
 mode "$mode_pianobar" {
     bindsym space exec bash -c "echo -n ' ' > ~/.config/pianobar/ctl";mode "default"
     bindsym n exec bash -c "echo -n 'n' > ~/.config/pianobar/ctl";mode "default"
     bindsym - exec bash -c "echo -n '-' > ~/.config/pianobar/ctl";mode "default"
     bindsym + exec bash -c "echo -n '+' > ~/.config/pianobar/ctl";mode "default"
     bindsym t exec bash -c "echo -n 't' > ~/.config/pianobar/ctl";mode "default"
+    bindsym l exec bash -c "gnome-terminal -e pianobar";mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# MPlayer
+# 
+# Note that for this to work you need to fist do this:
+# 
+#    $ mkfifo ~/.config/mplayer/ctl
+# 
+bindsym $mod+Control+Mod4+p mode "$mode_mplayer"
+set $mode_mplayer MPlayer:  <space> play/pause || (n)ext || (p)revious || (q)uit
+mode "$mode_mplayer" {
+    bindsym space exec bash -c "echo "pause" > ~/.config/mplayer/ctl";mode "default"
+    bindsym n exec bash -c "echo 'pt_step 1' > ~/.config/mplayer/ctl";mode "default"
+    bindsym p exec bash -c "echo 'pt_step -1' > ~/.config/mplayer/ctl";mode "default"
+    bindsym q exec bash -c "echo 'quit' > ~/.config/mplayer/ctl";mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -178,14 +245,22 @@ mode "$mode_pianobar" {
 
 
 # Screen controls
-bindsym XF86MonBrightnessUp exec xbacklight -inc 20
-bindsym XF86MonBrightnessDown exec xbacklight -dec 20
+# bindsym XF86MonBrightnessUp exec xbacklight -inc 5
+# bindsym Shift+XF86MonBrightnessUp exec xbacklight -set 100 -time 1500 -steps 1000
+# bindsym XF86MonBrightnessDown exec xbacklight -dec 5
+# bindsym Shift+XF86MonBrightnessDown exec xbacklight -set 10 -time 1500 -steps 1000
+bindsym XF86MonBrightnessUp exec brightnessctl s +5%
+bindsym Shift+XF86MonBrightnessUp exec brightnessctl s 100%
+bindsym Control+XF86MonBrightnessUp exec brightnessctl s +1%
+bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
+bindsym Shift+XF86MonBrightnessDown exec brightnessctl s 5%
+bindsym Control+XF86MonBrightnessDown exec brightnessctl s 1%-
 
 # Show a calendar
 bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, (s)hare, <--(l)eft, (r)ight-->
+set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, (s)hare, <--ext (l)eft, ext (r)ight-->, (h)ome, (3)home, mee(t)ing
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
     bindsym x exec selmon ext; mode "default"
@@ -195,6 +270,10 @@ mode "$mode_screens" {
     bindsym s exec selmon ext 720; mode "default"
     bindsym l exec selmon left; mode "default"
     bindsym r exec selmon right; mode "default"
+    # .screenlayout folder scripts created by arandr
+    bindsym h exec ~/.screenlayout/home_desk.sh; mode "default"
+    bindsym 3 exec ~/.screenlayout/3monitors_home.sh; mode "default"
+    bindsym t exec ~/.screenlayout/2monitor_meeting.sh; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -205,21 +284,38 @@ bindsym $mod+s mode "$mode_screens"
 
 # Application controls
 # bindsym XF86HomePage exec firefox-esr
-bindsym XF86HomePage exec google-chrome
+bindsym XF86HomePage exec google-chrome --force-dark-mode
 bindsym XF86Calculator exec speedcrunch
+bindsym $mod+Control+c exec speedcrunch
 bindsym Mod4+e exec nautilus --no-desktop
 bindsym $mod+Control+e exec nautilus --no-desktop
-bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
-bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+bindsym $mod+Control+Shift+e exec kitty -e ranger
+bindsym $mod+Control+Shift+c exec dmenu_bash_command
+bindsym $mod+Shift+m exec joinmeeting
+bindsym $mod+equal exec --no-startup-id ringcentral_mute_toggle
+# -------------
+# Ubuntu 16.04 settings
+# -------------
+# bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+# bindsym XF86Tools exec XDG_CURRENT_DESKTOP=Unity unity-control-center
+# -------------
+# Ubuntu 18.04 settings
+# -------------
+bindsym $mod+Control+Shift+s exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
+bindsym XF86Tools exec XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 
-set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen
+set $mode_screenshot Screenshot (w)indow, seletio(n), (s)creen, (t)ool, (f)lameshot
 mode "$mode_screenshot" 
 {
     bindsym w exec --no-startup-id scrot --focused && notify-send 'SCREENSHOT' 'Took screenshot of active window.'; mode "default"
     bindsym --release n exec scrot --select && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+    bindsym --release Shift+n exec SCROT_FILENAME=$(tempfile) scrot -s $SCROT_FILENAME -e 'xclip -selection clipboard -t image/png -i $f'
     bindsym s exec --no-startup-id scrot && notify-send 'SCREENSHOT' 'Took fullscreen screenshot'; mode "default"
+    bindsym t exec --no-startup-id gnome-screenshot --interactive; mode "default"
     # bindsym --release n exec import ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
     # bindsym --release s exec import -window root ~/screenshots/`date +%Y%m%d_%H:%M:%S_screenshot.png` && notify-send 'SCREENSHOT' 'Took screenshot of seletion.'; mode "default"
+    # bindsym f exec --no-startup-id flatpak run org.flameshot.Flameshot gui; mode "default"
+    bindsym f exec --no-startup-id flameshot gui; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -244,20 +340,39 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 mode "resize" {
         # general resizing
         bindsym h resize shrink width 10 px or 10 ppt
-        bindsym j resize grow height 10 px or 10 ppt
-        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym j resize shrink height 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
 
-        # finer resizing (hold shift)
-        bindsym Shift+h resize shrink width 5 px or 5 ppt
-        bindsym Shift+j resize grow height 5 px or 5 ppt
-        bindsym Shift+k resize shrink height 5 px or 5 ppt
-        bindsym Shift+l resize grow width 5 px or 5 ppt
+        # faster resizing
+        bindsym Control+h resize shrink width 20 px or 20 ppt
+        bindsym Control+j resize shrink height 20 px or 20 ppt
+        bindsym Control+k resize grow height 20 px or 20 ppt
+        bindsym Control+l resize grow width 20 px or 20 ppt
 
-        # These don't seem to work yet, but the idea is to have a tall and wide
-        # mode, which maximize as much as possible with one keypress
-        bindsym t resize grow height 10000; mode "default"
-        bindsym w resize grow width 10000; mode "default"
+        # finer resizing (hold shift)
+        bindsym Shift+h resize shrink width 2 px or 2 ppt
+        bindsym Shift+j resize shrink height 2 px or 2 ppt
+        bindsym Shift+k resize grow height 2 px or 2 ppt
+        bindsym Shift+l resize grow width 2 px or 2 ppt
+
+        # alternate general resizing
+        bindsym n resize shrink width 10 px or 10 ppt
+        bindsym s resize shrink height 10 px or 10 ppt
+        bindsym t resize grow height 10 px or 10 ppt
+        bindsym w resize grow width 10 px or 10 ppt
+
+        # alternate faster resizing
+        bindsym Control+n resize shrink width 20 px or 20 ppt
+        bindsym Control+s resize shrink height 20 px or 20 ppt
+        bindsym Control+t resize grow height 20 px or 20 ppt
+        bindsym Control+w resize grow width 20 px or 20 ppt
+
+        # alternate finer resizing (hold shift)
+        bindsym Shift+n resize shrink width 2 px or 2 ppt
+        bindsym Shift+s resize shrink height 2 px or 2 ppt
+        bindsym Shift+t resize grow height 2 px or 2 ppt
+        bindsym Shift+w resize grow width 2 px or 2 ppt
 
         # Only for floats, size to a 1080 screen, even on larger monitor, and
         # center it: a, for "app"
@@ -273,7 +388,7 @@ bindsym $mod+r mode "resize"
 
 set $mode_system System (l)ock, (e)xit, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
-    bindsym l exec --no-startup-id i3lock -e -f -i ~/.lockscreen.png; mode "default"
+    bindsym l exec --no-startup-id xautolock -locknow; mode "default"
     bindsym e exit exec --no-startup-id i3-msg exit; mode "default"
     bindsym s exec --no-startup-id systemctl suspend; mode "default"
     bindsym h exec --no-startup-id systemctl hibernate; mode "default"
@@ -291,13 +406,14 @@ bindsym $mod+Control+Shift+v exec --no-startup-id nmcli con up uuid $(nmcli c | 
 
 # Some mouse stuff
 floating_modifier $mod
-bindsym --whole-window $mod+button2 kill
-bindsym --whole-window $mod+button3 floating toggle
+bindsym --whole-window Control+button2 kill
+bindsym --whole-window Control+button3 floating toggle
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
         status_command i3status
+        # status_command i3blocks
         tray_output primary
         font pango:monospace 10
         bindsym button4 nop # vertical scroll
@@ -306,60 +422,80 @@ bar {
         bindsym button7 nop # horizontal scroll
 }
 
+
+exec --no-startup-id compton -b
 exec --no-startup-id xsetroot -solid "#303030"
-exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -i ~/.lockscreen.png"
+exec --no-startup-id xautolock -time 15 -locker "i3lock -e -f -t -i ~/.lockscreen.png"
 exec --no-startup-id nm-applet
 exec --no-startup-id caffeine-indicator 
 exec --no-startup-id pasystray
-# natural scroll on Synaptic Touchpad (sometimes one, sometimes the other... not sure why)
-# exec --no-startup-id synclient VertScrollDelta=-113
-# exec --no-startup-id synclient NaturalScrolling=1 VertScrollDelta=-113
-# set up the scroll direction for natural scrolling
-exec --no-startup-id synclient VertScrollDelta=-113 HorizTwoFingerScroll=1 HorizScrollDelta=-114
 
-# disable touchpad while typing (-t), but allow with modifiers (-k)
-exec --no-startup-id syndaemon -t -k -d
-
-# xprop to get class
-assign [class="Firefox"] 3
-assign [class="Firefox-esr"] 3
+# Assign windows to particular virtual desktops
+#
+#  -- use xprop to get window class
+#
+assign [class="firefox"] 3
 assign [class="Google-chrome" instance="google-chrome"] 3
+assign [class="zoom"] 7
+
+assign [class="Microsoft Teams"] 7
 assign [class="Evolution"] 8
-
 assign [class="Google-chrome" instance="outlook.office.com__calendar"] 8
+assign [class="outlook-calendar-app"] 8
 assign [class="Google-chrome" instance="outlook.office.com__mail_inbox"] 8
-
+assign [class="outlook-mail-app"] 8
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
+assign [class="Google-chrome" instance="devdocs.io"] 10
+assign [class="Navigator" title="DevDocs"] 10
+assign [class="Gnome-terminal" title="DI.FM"] 10
 
-# exec --no-startup-id firefox-esr
-exec --no-startup-id google-chrome
-# exec --no-startup-id evolution
-exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/mail/inbox/
-exec --no-startup-id google-chrome-stable --app=https://outlook.office.com/calendar
-exec --no-startup-id slack
-exec --no-startup-id zeal
 
 # For windows that start in full-screen that I want to capture
-# for_window [class="<CLASS>"] fullscreen disable
-for_window [class="Bcompare"] fullscreen enable
+for_window [class="Bcompare"] floating enable
+for_window [class="Bcompare"] resize set 1920 px 1080 px
+for_window [class="Bcompare"] move position center
 
 # Some windows I don't want to be too big on startup (requires i3 v4.15+)
 for_window [class="Keepassx"] resize set 0 ppt 20 ppt
-for_window [class="keepassxc"] resize set 0 ppt 20 ppt
+for_window [class="KeePassXC"] resize set 0 ppt 20 ppt
+for_window [class="Keepassx"] floating enable
+for_window [class="KeePassXC"] floating enable move position center
+for_window [class="zoom" title="Participants"] resize set 20 ppt 0 ppt
+for_window [class="zoom" title="Zoom Group Chat"] resize set 30 ppt 0 ppt
+
+# Stop Zoom from always stealing my focus when people share
+#  -- also be sure to turn off settings->share screen->enter full screen when a participant shares
+for_window [class="zoom"] no_focus
 
 # Some windows are best if they float
-for_window [class="Speedcrunch"] floating enable
-for_window [class="VirtualBox"] floating enable
+for_window [class="Speedcrunch"] floating enable # older versions, can remove soon
+for_window [class="SpeedCrunch"] floating enable
+for_window [class="VirtualBox Machine"] floating disable
+for_window [class="VirtualBox Manager"] floating disable
 for_window [class="Display"] floating enable move position center
+for_window [class="copyq"] floating enable move position center
+for_window [title="^zoom$" class="[zoom]*"] floating enabled
+# for_window [title="^zoom$" class="[zoom]*"] move scratchpad
 
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 no_focus [window_role="pop-up"]
 
-# stack the chrome window on workspace 8 (inbox & calendar)
-exec --no-startup-id "i3-msg 'workspace 8;layout tabbed;workspace 1'"
-
 # support for dynamic bookmarks
 bindsym $mod+Shift+b exec dmenu_bookmarks
 
+# Apps that I always want to run at startup
+# exec --no-startup-id google-chrome --force-dark-mode
+exec --no-startup-id firefox
+exec --no-startup-id keepassxc
+exec --no-startup-id copyq
+
+### Include system specific stuff
+#
+# Some common examples to copy in as a template
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/mail/inbox/
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://outlook.office.com/calendar
+# exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://devdocs.io
+#
+include system.conf
