@@ -23,6 +23,8 @@ default_floating_border pixel 2
 
 for_window [class=.*] border pixel 2
 
+popup_during_fullscreen all
+
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 # fun toys
@@ -64,6 +66,8 @@ bindsym $mod+Shift+l move right
 # move current workspace between monitors
 bindsym $mod+Control+Shift+h move workspace to output left
 bindsym $mod+Control+Shift+l move workspace to output right
+bindsym $mod+Control+Shift+j move workspace to output down
+bindsym $mod+Control+Shift+k move workspace to output up
 
 # split in horizontal orientation
 bindsym $mod+i split h
@@ -181,9 +185,23 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume `pacmd l
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute `pacmd list-sources | awk '/\* index:/{print $3}'` toggle
-bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
-bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
+# bindsym $mod+Control+Shift+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
+# bindsym $mod+Control+Shift+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
 bindsym $mod+Control+Shift+m exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
+
+set $mode_volume Volume:  (j) volume- || (k) volume+ || ctrl(j) volume -20 || ctrl-(k) volume +20 || (m)ute
+bindsym $mod+Control+Shift+v mode "$mode_volume"
+mode "$mode_volume" {
+    bindsym j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -5%
+    bindsym k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +5%
+    bindsym Control+j exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` -20%
+    bindsym Control+k exec --no-startup-id pactl set-sink-volume `pacmd list-sinks | awk '/\* index:/{print $3}'` +20%
+    bindsym m exec --no-startup-id pactl set-sink-mute `pacmd list-sinks | awk '/\* index:/{print $3}'` toggle
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 
 bindsym $mod+Shift+s exec pavucontrol -t 3
@@ -257,14 +275,17 @@ bindsym Shift+XF86MonBrightnessDown exec brightnessctl s 5%
 bindsym Control+XF86MonBrightnessDown exec brightnessctl s 1%-
 
 # Show a calendar
-bindsym $mod+c exec zenity --calendar
+# bindsym $mod+c exec zenity --calendar
 
 
-set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (m)irror, (p)roject, (s)hare, <--ext (l)eft, ext (r)ight-->, (h)ome, (3)home, mee(t)ing
+set $mode_screens Screens (a)uto, e(x)ternal, (i)nternal, (4)k internal, (m)irror, (p)roject, (s)hare, <--ext (l)eft, ext (r)ight-->, (h)ome, (3) home, mee(t)ing, (c)apture device, (o)utside
 mode "$mode_screens" {
     bindsym a exec xrandr --auto;mode "default"
     bindsym x exec selmon ext; mode "default"
-    bindsym i exec selmon int; mode "default"
+    bindsym i exec ~/.screenlayout/internal.sh; mode "default"
+    bindsym 4 exec ~/.screenlayout/internal_4k.sh; mode "default"
+    bindsym Shift+4 exec ~/.screenlayout/internal_4k_portable.sh; mode "default"
+    # bindsym i exec selmon int; mode "default"
     bindsym m exec selmon mirror 1080; mode "default"
     bindsym p exec selmon ext 1080; mode "default"
     bindsym s exec selmon ext 720; mode "default"
@@ -272,8 +293,10 @@ mode "$mode_screens" {
     bindsym r exec selmon right; mode "default"
     # .screenlayout folder scripts created by arandr
     bindsym h exec ~/.screenlayout/home_desk.sh; mode "default"
-    bindsym 3 exec ~/.screenlayout/3monitors_home.sh; mode "default"
     bindsym t exec ~/.screenlayout/2monitor_meeting.sh; mode "default"
+    bindsym c exec ~/.screenlayout/magewell_home.sh; mode "default"
+    bindsym 3 exec ~/.screenlayout/home_with_portable.sh; mode "default"
+    bindsym o exec ~/.screenlayout/home_outside.sh; mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -284,7 +307,7 @@ bindsym $mod+s mode "$mode_screens"
 
 # Application controls
 # bindsym XF86HomePage exec firefox-esr
-bindsym XF86HomePage exec google-chrome --force-dark-mode
+bindsym XF86HomePage exec brave-browser-scaled --force-dark-mode
 bindsym XF86Calculator exec speedcrunch
 bindsym $mod+Control+c exec speedcrunch
 bindsym Mod4+e exec nautilus --no-desktop
@@ -292,7 +315,7 @@ bindsym $mod+Control+e exec nautilus --no-desktop
 bindsym $mod+Control+Shift+e exec kitty -e ranger
 bindsym $mod+Control+Shift+c exec dmenu_bash_command
 bindsym $mod+Shift+m exec joinmeeting
-bindsym $mod+equal exec --no-startup-id ringcentral_mute_toggle
+bindsym $mod+equal exec --no-startup-id toggle_meeting_mute
 # -------------
 # Ubuntu 16.04 settings
 # -------------
@@ -401,8 +424,6 @@ mode "$mode_system" {
 }
 bindsym $mod+Shift+BackSpace mode "$mode_system"
 
-# Start the VPN connection
-bindsym $mod+Control+Shift+v exec --no-startup-id nmcli con up uuid $(nmcli c | grep vpn | cut -b 27-62)
 
 # Some mouse stuff
 floating_modifier $mod
@@ -415,7 +436,7 @@ bar {
         status_command i3status
         # status_command i3blocks
         tray_output primary
-        font pango:monospace 10
+        font pango:monospace 7
         bindsym button4 nop # vertical scroll
         bindsym button5 nop # vertical scroll
         bindsym button6 nop # horizontal scroll
@@ -436,6 +457,7 @@ exec --no-startup-id pasystray
 #
 assign [class="firefox"] 3
 assign [class="Google-chrome" instance="google-chrome"] 3
+assign [class="Brave-browser" instance="brave-browser"] 3
 assign [class="zoom"] 7
 
 assign [class="Microsoft Teams"] 7
@@ -447,6 +469,7 @@ assign [class="outlook-mail-app"] 8
 assign [class="Slack"] 9
 assign [class="Zeal"] 10
 assign [class="Google-chrome" instance="devdocs.io"] 10
+assign [class="Brave-browser" instance="devdocs.io"] 10
 assign [class="Navigator" title="DevDocs"] 10
 assign [class="Gnome-terminal" title="DI.FM"] 10
 
@@ -475,6 +498,7 @@ for_window [class="VirtualBox Machine"] floating disable
 for_window [class="VirtualBox Manager"] floating disable
 for_window [class="Display"] floating enable move position center
 for_window [class="copyq"] floating enable move position center
+for_window [class="Spyder"] floating enable move position center
 for_window [title="^zoom$" class="[zoom]*"] floating enabled
 # for_window [title="^zoom$" class="[zoom]*"] move scratchpad
 
@@ -487,7 +511,7 @@ bindsym $mod+Shift+b exec dmenu_bookmarks
 
 # Apps that I always want to run at startup
 # exec --no-startup-id google-chrome --force-dark-mode
-exec --no-startup-id firefox
+# exec --no-startup-id firefox
 exec --no-startup-id keepassxc
 exec --no-startup-id copyq
 
@@ -499,3 +523,4 @@ exec --no-startup-id copyq
 # exec --no-startup-id google-chrome-stable --force-dark-mode --app=https://devdocs.io
 #
 include system.conf
+
